@@ -1,4 +1,4 @@
-Just some rick and morty chracters and info. Program randmoly gives list of all chracters everytime you run it.
+Just some rick and morty chracters and info. Program randmoly gives a chracter info from a list of 800+ chracters.
 
 Will figure out what else could be done with this later.
 
