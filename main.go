@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"github.com/gin-gonic/gin"
 )
 
 type result struct{
@@ -32,7 +33,27 @@ func random(x int) int{
 }
 
 func main(){
+
+	router := gin.Default()
+	router.GET("/", printM)
+	router.Run("localhost:8083")
+	fmt.Println("Started at 8083")
 	
+
+	
+}
+
+func printer(p *result){
+	fmt.Println("Name-> ",p.Name)
+	fmt.Println("Status-> ",p.Status)
+	fmt.Println("Species-> ",p.Species)
+	fmt.Println("Type-> ",p.Type)
+	fmt.Println("Gender-> ",p.Gender)
+	fmt.Println("Origin-> ",p.Origin["name"])
+	fmt.Println("Location-> ",p.Location["name"])
+}
+
+func printM(c *gin.Context){
 	resp := GETresponse(linkGenerator()) 
 
 	defer resp.Body.Close()
@@ -41,13 +62,12 @@ func main(){
 
 	ParsedData := ParsedData(jsonData)
 
-	fmt.Println("Name-> ",ParsedData.Name)
-	fmt.Println("Status-> ",ParsedData.Status)
-	fmt.Println("Species-> ",ParsedData.Species)
-	fmt.Println("Type-> ",ParsedData.Type)
-	fmt.Println("Gender-> ",ParsedData.Gender)
-	fmt.Println("Origin-> ",ParsedData.Origin["name"])
-	fmt.Println("Location-> ",ParsedData.Location["name"])
+	printer(ParsedData)
+
+	htmlTemplate := `<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #C4CB24;"><div style="text-align: center; background-color: #fff; padding: 20px;"><h1>Daily Dose of Rick and Morty</h1><img src="%s" alt="Rick and Morty Image"><p>Name: %s</p><p>Status: %s</p><p>Species: %s</p><p>Gender: %s</p><p>Origin: %s</p><p>Last Location: %s</p></div></div>`
+    formattedHTML := fmt.Sprintf(htmlTemplate, ParsedData.Image, ParsedData.Name, ParsedData.Status, ParsedData.Species,ParsedData.Gender,ParsedData.Origin["name"],ParsedData.Location["name"])
+
+	fmt.Fprintln(c.Writer,formattedHTML)
 	
 }
 
